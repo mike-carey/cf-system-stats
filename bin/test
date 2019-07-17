@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+function test() {
+  local test_dir=${TESTDIR:-tests}
+
+  cd $test_dir
+  bats *.bats
+}
+
+if [[ ${BASH_SOURCE[0]} != $0 ]]; then
+  echo "$0 cannot be sourced!" >&2
+  exit 1
+else
+  set -euo pipefail
+
+  test "${@:-}"
+  exit $?
+fi

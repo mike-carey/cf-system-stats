@@ -1,0 +1,11 @@
+---
+- name: single-test
+  endpoint: cf.local
+  skip-ssl-validation: true
+  username: username
+  password: password
+- name: multiple-test
+  endpoint: cf2.local
+  skip-ssl-validation: true
+  username: username2
+  password: password2

@@ -1,0 +1,30 @@
+---
+code_url: git@github.com/mike-carey/cf-system-usage.git
+code_branch: master
+code_private_key: ((git_private_key))
+
+config_url: git@github.com/mike-carey/cf-system-usage.git
+config_branch: master
+config_private_key: ((git_private_key))
+
+pivnet_token: ((pivnet_token))
+platform_automation_slug: platform-automation
+platform_automation_version: 3\.0\..*
+
+plugin_version: 2.3.0
+
+credhub_server: ((credhub_server))
+credhub_client_id: ((credhub_client_id))
+credhub_client_secret: ((credhub_client_secret))
+credhub_ca_cert: ((credhub_ca_cert))
+credhub_prefix: /concourse
+
+email_host: ((email_host))
+email_port: "587"
+email_username: ((email_username))
+email_password: ((email_password))
+email_skip_ssl_validation: true
+email_ca_cert: ((email_ca_cert))
+email_from: ((email_from))
+email_to:
+- ((email_to))

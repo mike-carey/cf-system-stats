@@ -1,0 +1,30 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: concourse/builder-task
+
+params:
+  REPOSITORY: docker-image
+  CONTEXT: .
+
+inputs:
+- name: code
+
+outputs:
+- name: image
+- name: unpacked-image
+
+caches:
+- path: cache
+
+run:
+  path: bash
+  args:
+    - -c
+    - |
+      export CONTEXT=code/$CONTEXT
+      build
+      tar -xvf image/image.tar -C unpacked-image

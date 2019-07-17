@@ -1,0 +1,45 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: 
+
+params:
+  CONFIG_PATH: # Optional - Use a yaml instead of configuring each cf param
+  # Format:
+  ##
+  # configs:                # Equivalent variable:
+  # - name:                 # REPORT_NAME
+  #   endpoint:             # CF_ENDPOINT
+  #   username:             # CF_USERNAME
+  #   password:             # CF_PASSWORD
+  #   skip-ssl-validation:  # SKIP_SSL_VALIDATION
+  ##
+
+  # CF Login information
+  REPORT_NAME: # Required - The path to the file to output the report to
+  CF_ENDPOINT: # Required - The endpoint to log into
+  CF_USERNAME: # Required - The username of the admin user or equivalent via
+               #            cloud_controller.admin and uaa.admin scopes
+  CF_PASSWORD: # Required - The password of the admin user or equivalent via
+               #            cloud_controller.admin and uaa.admin scopes
+
+  SKIP_SSL_VALIDATION: false # Optional - Skip ssl validation
+
+  # Paths
+  CF_RELATIVE_HOME: # Optional - If set, CF_HOME will be replaced with this
+                    #            path expanded to be absolute
+
+  PLUGIN_PATH: bcr-plugin-linux # Optional - The path to the bcr plugin,
+                                #            relative to the plugin input.  # BCR Options
+  MONTHLY: false # Optional - True sets the monthly flag is set with bcr command
+
+inputs:
+- name: config
+  required: false
+- name: plugin
+
+outputs:
+- name: report

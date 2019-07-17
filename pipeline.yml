@@ -1,0 +1,120 @@
+---
+resource_types:
+- name: email
+  type: docker-image
+  source:
+    repository: pcfseceng/email-resource
+
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: platform-automation
+  type: pivnet
+  source:
+    api_token: ((pivnet_token))
+    product_slug: ((platform_automation_slug))
+    product_version: ((platform_automation_version))
+
+- name: tasks
+  type: git
+  source:
+    url: ((code_url))
+    private_key: ((code_key))
+    branch: ((code_branch))
+    paths:
+      - tasks/*
+
+- name: config
+  type: git
+  source:
+    url: ((config_url))
+    private_key: ((config_key))
+    branch: ((config_branch))
+    paths:
+      - config/*
+
+- name: schedule
+  type: time
+  source:
+    interval: 168h
+
+- name: plugin
+  type: github-release
+  source:
+    owner: avasseur-pivotal
+    repository: cf_get_events
+    access_token: ((github_access_token))
+
+- name: email
+  type: email
+  source:
+    smtp:
+      host: ((email_host))
+      port: ((email_port))
+      username: ((email_username))
+      password: ((email_password))
+      skip_ssl_validation: ((email_skip_ssl_validation))
+      ca_cert: ((email_ca_cert))
+    from: ((email_from))
+    to: ((email_to))
+
+definitions:
+  platform-automation-image: &platform-automation-image
+    get: platform-automation-image
+    resource: platform-automation
+    params:
+      unpack: true
+      globs:
+      - platform-automation-image-*.tgz
+  platform-automation-tasks: &platform-automation-tasks
+    get: platform-automation-tasks
+    resource: platform-automation
+    params:
+      unpack: true
+      globs:
+      - platform-automation-tasks-*.zip
+
+jobs:
+- name: get-stats
+  plan:
+  - in_parallel:
+    - get: schedule
+      trigger: true
+    - get: tasks
+    - get: config
+    - get: plugin-release
+      resource: plugin
+      params:
+        version:
+          tag: ((plugin_version))
+        globs:
+          - "*-linux"
+    - <<: *platform-automation-image
+    - <<: *platform-automation-tasks
+  - task: interpolate
+    file: platform-automation-tasks/credhub-interpolate.yml
+    input_mapping:
+      config: config
+    params:
+      CREDHUB_SERVER: ((credhub_server))
+      CREDHUB_CLIENT: ((credhub_client_id))
+      CREDHUB_SECRET: ((credhub_client_secret))
+      CREDHUB_CA_CERT: ((credhub_ca_cert))
+      PREFIX: ((credhub_prefix))
+      INTERPOLATION_PATHS: .
+      SKIP_MISSING: true
+  - task: get-stats
+    file: tasks/get-cf-usage.yml
+    input_mapping:
+      config: config
+      plugin: plugin
+  - put: email
+    params:
+      subject_text: "CF Usage Report"
+      send_empty_body: true
+      attachment_globs:
+        - report/*

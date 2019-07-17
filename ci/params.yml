@@ -1,0 +1,7 @@
+---
+code_url: git@github.com/mike-carey/cf-system-usage.git
+code_branch: master
+code_private_key: ((git_private_key))
+
+git_bot_username: ((git_bot_username))
+git_bot_email: ((git_bot_email))

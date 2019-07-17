@@ -1,0 +1,39 @@
+##
+# Java Ignore
+##
+
+/.params.yml
+/.envrc
+
+##
+# Common
+##
+
+*.gz
+*.bak
+*.log
+*.tar
+*.tmp
+*.tgz
+*.zip
+
+##
+# OS Files
+##
+
+# Mac OS
+.DS_Store
+._*
+.Trashes/
+
+# Linux
+*~
+*.swp
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# .gitignore
